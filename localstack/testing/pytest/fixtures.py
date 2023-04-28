@@ -23,7 +23,6 @@ from pytest_httpserver import HTTPServer
 from werkzeug import Request, Response
 
 from localstack import config, constants
-from localstack.aws.accounts import get_aws_account_id
 from localstack.constants import TEST_AWS_ACCESS_KEY_ID, TEST_AWS_SECRET_ACCESS_KEY
 from localstack.services.stores import (
     AccountRegionBundle,
@@ -86,9 +85,8 @@ def boto3_session():
         return boto3.Session()
 
     return boto3.Session(
-        # LocalStack assumes AWS_ACCESS_KEY_ID config contains the AWS_ACCOUNT_ID value.
-        aws_access_key_id=get_aws_account_id(),
-        aws_secret_access_key="__test_key__",
+        aws_access_key_id=TEST_AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=TEST_AWS_SECRET_ACCESS_KEY,
     )
 
 
