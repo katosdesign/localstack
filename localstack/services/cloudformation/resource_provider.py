@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import inspect
 import logging
 import time
 import uuid
@@ -445,19 +444,8 @@ class LegacyResourceProvider(ResourceProvider):
             executed = False
             # TODO(srw) 3 - callable function
             if callable(func.get("function")):
-                sig = inspect.signature(func["function"])
-                if "logical_resource_id" in sig.parameters:
-                    result = func["function"](
-                        request.logical_resource_id, resource, request.stack_name
-                    )
-                else:
-                    result = func["function"](
-                        request.logical_resource_id,
-                        self.all_resources,
-                        self.resource_type,
-                        func,
-                        request.stack_name,
-                    )
+                result = func["function"](request.logical_resource_id, resource, request.stack_name)
+
                 results.append(result)
                 executed = True
             elif not executed:
@@ -499,17 +487,11 @@ class LegacyResourceProvider(ResourceProvider):
                     f"Executing callback method for {self.resource_type}:{request.logical_resource_id}"
                 )
                 result_handler = func["result_handler"]
-                sig = inspect.signature(result_handler)
-                if "logical_resource_id" in sig.parameters:
-                    result_handler(
-                        result,
-                        request.logical_resource_id,
-                        self.all_resources[request.logical_resource_id],
-                    )
-                else:
-                    result_handler(
-                        result, request.logical_resource_id, self.all_resources, self.resource_type
-                    )
+                result_handler(
+                    result,
+                    request.logical_resource_id,
+                    self.all_resources[request.logical_resource_id],
+                )
 
         return ProgressEvent(status=OperationStatus.SUCCESS, resource_model=resource["Properties"])
 
