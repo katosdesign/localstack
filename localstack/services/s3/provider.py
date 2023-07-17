@@ -162,8 +162,8 @@ from localstack.services.s3.presigned_url import (
 from localstack.services.s3.utils import (
     _create_invalid_argument_exc,
     capitalize_header_name_from_snake_case,
-    extract_bucket_key_version_id_from_uri,
     decode_aws_chunked_object,
+    extract_bucket_key_version_id_from_uri,
     get_bucket_from_moto,
     get_header_name,
     get_key_from_moto_bucket,
