@@ -162,8 +162,8 @@ from localstack.services.s3.presigned_url import (
 from localstack.services.s3.utils import (
     _create_invalid_argument_exc,
     capitalize_header_name_from_snake_case,
+    extract_bucket_key_version_id_from_uri,
     decode_aws_chunked_object,
-    extract_bucket_key_version_id_from_copy_source,
     get_bucket_from_moto,
     get_header_name,
     get_key_from_moto_bucket,
@@ -604,7 +604,7 @@ class S3Provider(S3Api, ServiceLifecycleHook):
         if not config.S3_SKIP_KMS_KEY_VALIDATION and (sse_kms_key_id := request.get("SSEKMSKeyId")):
             validate_kms_key_id(sse_kms_key_id, dest_moto_bucket)
 
-        src_bucket, src_key, src_version_id = extract_bucket_key_version_id_from_copy_source(
+        src_bucket, src_key, src_version_id = extract_bucket_key_version_id_from_uri(
             request["CopySource"]
         )
         src_moto_bucket = get_bucket_from_moto(moto_backend, bucket=src_bucket)
