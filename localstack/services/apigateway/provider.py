@@ -9,6 +9,7 @@ from typing import IO, Any
 from moto.apigateway import models as apigw_models
 from moto.apigateway.models import Resource as MotoResource
 from moto.apigateway.models import RestAPI as MotoRestAPI
+from moto.apigateway.models import UsagePlan
 from moto.core.utils import camelcase_to_underscores
 
 from localstack.aws.api import CommonServiceException, RequestContext, ServiceRequest, handler
@@ -43,6 +44,7 @@ from localstack.aws.api.apigateway import (
     Integration,
     IntegrationResponse,
     IntegrationType,
+    ListOfApiStage,
     ListOfPatchOperation,
     ListOfString,
     MapOfStringToBoolean,
@@ -59,6 +61,7 @@ from localstack.aws.api.apigateway import (
     PutIntegrationResponseRequest,
     PutMode,
     PutRestApiRequest,
+    QuotaSettings,
     RequestValidator,
     RequestValidators,
     Resource,
@@ -70,6 +73,8 @@ from localstack.aws.api.apigateway import (
     Tags,
     TestInvokeMethodRequest,
     TestInvokeMethodResponse,
+    ThrottleSettings,
+    UsagePlans,
     VpcLink,
     VpcLinks,
 )
@@ -1766,6 +1771,87 @@ class ApigatewayProvider(ApigatewayApi, ServiceLifecycleHook):
 
         store.rest_apis[rest_api_id].models.pop(model_name, None)
         store.rest_apis[rest_api_id].resolved_models.pop(model_name, None)
+
+    def create_usage_plan(
+        self,
+        context: RequestContext,
+        name: String,
+        description: String = None,
+        api_stages: ListOfApiStage = None,
+        throttle: ThrottleSettings = None,
+        quota: QuotaSettings = None,
+        tags: MapOfStringToString = None,
+    ) -> UsagePlan:
+        usage_plan: UsagePlan = call_moto(context=context)
+        if not usage_plan.get("quota"):
+            usage_plan.pop("quota", None)
+
+        if not usage_plan.get("throttle"):
+            usage_plan.pop("throttle", None)
+
+        return usage_plan
+
+    def update_usage_plan(
+        self,
+        context: RequestContext,
+        usage_plan_id: String,
+        patch_operations: ListOfPatchOperation = None,
+    ) -> UsagePlan:
+        usage_plan: UsagePlan = call_moto(context=context)
+        if not usage_plan.get("quota"):
+            usage_plan.pop("quota", None)
+
+        if not usage_plan.get("throttle"):
+            usage_plan.pop("throttle", None)
+
+        if "tags" not in usage_plan:
+            usage_plan["tags"] = {}
+
+        if usage_plan.get("throttle", {}).get("rateLimit"):
+            usage_plan["throttle"]["rateLimit"] = float(usage_plan["throttle"]["rateLimit"])
+
+        if usage_plan.get("throttle", {}).get("burstLimit"):
+            usage_plan["throttle"]["burstLimit"] = int(usage_plan["throttle"]["burstLimit"])
+
+        return usage_plan
+
+    def get_usage_plan(self, context: RequestContext, usage_plan_id: String) -> UsagePlan:
+        usage_plan: UsagePlan = call_moto(context=context)
+        if not usage_plan.get("quota"):
+            usage_plan.pop("quota", None)
+
+        if not usage_plan.get("throttle"):
+            usage_plan.pop("throttle", None)
+
+        if "tags" not in usage_plan:
+            usage_plan["tags"] = {}
+
+        return usage_plan
+
+    def get_usage_plans(
+        self,
+        context: RequestContext,
+        position: String = None,
+        limit: NullableInteger = None,
+        key_id: String = None,
+        name_query: String = None,
+    ) -> UsagePlans:
+        usage_plans: UsagePlans = call_moto(context=context)
+        if not usage_plans.get("items"):
+            usage_plans["items"] = []
+
+        items = usage_plans["items"]
+        for up in items:
+            if not up.get("quota"):
+                up.pop("quota", None)
+
+            if not up.get("throttle"):
+                up.pop("throttle", None)
+
+            if "tags" not in up:
+                up.pop("tags", None)
+
+        return usage_plans
 
 
 # ---------------

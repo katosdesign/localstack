@@ -1846,7 +1846,6 @@ def create_rest_apigw(aws_client_factory):
         for usage_plan_id in usage_plan_ids:
             usage_plan_keys = apigateway_client.get_usage_plan_keys(usagePlanId=usage_plan_id)
             for key in usage_plan_keys.get("items", []):
-
                 apigateway_client.delete_api_key(apiKey=key["id"])
             apigateway_client.delete_usage_plan(usagePlanId=usage_plan_id)
 

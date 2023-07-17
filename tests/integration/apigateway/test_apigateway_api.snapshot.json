@@ -2603,5 +2603,80 @@
         }
       }
     }
+  },
+  "tests/integration/apigateway/test_apigateway_api.py::TestUsagePlans::test_usage_plan_crud": {
+    "recorded-date": "20-07-2023, 13:29:28",
+    "recorded-content": {
+      "create-usage-plan": {
+        "apiStages": [
+          {
+            "apiId": "<api-id:1>",
+            "stage": "dev"
+          }
+        ],
+        "description": "<description:1>",
+        "id": "<id:1>",
+        "name": "<name:1>",
+        "ResponseMetadata": {
+          "HTTPHeaders": {},
+          "HTTPStatusCode": 201
+        }
+      },
+      "get-usage-plan": {
+        "apiStages": [
+          {
+            "apiId": "<api-id:1>",
+            "stage": "dev"
+          }
+        ],
+        "description": "<description:1>",
+        "id": "<id:1>",
+        "name": "<name:1>",
+        "tags": {},
+        "ResponseMetadata": {
+          "HTTPHeaders": {},
+          "HTTPStatusCode": 200
+        }
+      },
+      "get-usage-plans": {
+        "items": [
+          {
+            "apiStages": [
+              {
+                "apiId": "<api-id:1>",
+                "stage": "dev"
+              }
+            ],
+            "description": "<description:1>",
+            "id": "<id:1>",
+            "name": "<name:1>"
+          }
+        ],
+        "ResponseMetadata": {
+          "HTTPHeaders": {},
+          "HTTPStatusCode": 200
+        }
+      },
+      "update-usage-plan": {
+        "apiStages": [
+          {
+            "apiId": "<api-id:1>",
+            "stage": "dev"
+          }
+        ],
+        "description": "<description:1>",
+        "id": "<id:1>",
+        "name": "<name:1>",
+        "tags": {},
+        "throttle": {
+          "burstLimit": 100,
+          "rateLimit": 200.0
+        },
+        "ResponseMetadata": {
+          "HTTPHeaders": {},
+          "HTTPStatusCode": 200
+        }
+      }
+    }
   }
 }
