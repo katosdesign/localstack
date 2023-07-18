@@ -67,8 +67,8 @@ class GatewayRequestValidator(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -204,13 +204,13 @@ class GatewayRestAPI(GenericBaseModel):
             props["id"] = result["id"]
             return result
 
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
             resources = connect_to().apigateway.get_resources(restApiId=result["id"])["items"]
             for res in resources:
                 if res["path"] == "/" and not res.get("parentId"):
-                    resources[resource_id]["Properties"]["RootResourceId"] = res["id"]
+                    resource["Properties"]["RootResourceId"] = res["id"]
 
         return {
             "create": {"function": _create, "result_handler": _handle_result},
@@ -242,8 +242,8 @@ class GatewayDeployment(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -312,8 +312,8 @@ class GatewayResource(GenericBaseModel):
                 result["parentId"] = root_resource["id"]
             return result
 
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -470,14 +470,11 @@ class GatewayMethod(GenericBaseModel):
                     responseModels=response.get("responseModels") or {},
                 )
 
-        def _handle_result(result, resource_id, resources, resource_type):
-            resource = resources[resource_id]
+        def _handle_result(result, logical_resource_id, resource):
             rest_api_id = resource["Properties"]["RestApiId"]
             apigw_resource_id = resource["Properties"]["ResourceId"]
             http_method = resource["Properties"]["HttpMethod"]
-            resources[resource_id][
-                "PhysicalResourceId"
-            ] = f"{rest_api_id}-{apigw_resource_id}-{http_method}"
+            resource["PhysicalResourceId"] = f"{rest_api_id}-{apigw_resource_id}-{http_method}"
 
         return {
             "create": [
@@ -531,9 +528,9 @@ class GatewayStage(GenericBaseModel):
             result["stageName"] = stage_name
             return result
 
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["stageName"]
-            resources[resource_id]["Properties"]["StageName"] = result["stageName"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["stageName"]
+            resource["Properties"]["StageName"] = result["stageName"]
 
         return {
             "create": {
@@ -565,8 +562,8 @@ class GatewayUsagePlan(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -678,8 +675,8 @@ class GatewayApiKey(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -715,8 +712,8 @@ class GatewayUsagePlanKey(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["id"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["id"]
 
         return {
             "create": {
@@ -738,8 +735,8 @@ class GatewayDomain(GenericBaseModel):
 
     @staticmethod
     def get_deploy_templates():
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["domainName"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["domainName"]
 
         return {
             "create": {
@@ -795,8 +792,8 @@ class GatewayBasePathMapping(GenericBaseModel):
 
             return connect_to().apigateway.create_base_path_mapping(**kwargs)
 
-        def _handle_result(result, resource_id, resources, resource_type):
-            resources[resource_id]["PhysicalResourceId"] = result["restApiId"]
+        def _handle_result(result, logical_resource_id, resource):
+            resource["PhysicalResourceId"] = result["restApiId"]
 
         return {
             "create": {
