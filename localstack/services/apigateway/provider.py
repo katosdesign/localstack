@@ -1797,7 +1797,7 @@ class ApigatewayProvider(ApigatewayApi, ServiceLifecycleHook):
         usage_plan_id: String,
         patch_operations: ListOfPatchOperation = None,
     ) -> UsagePlan:
-        usage_plan: UsagePlan = call_moto(context=context)
+        usage_plan = call_moto(context=context)
         if not usage_plan.get("quota"):
             usage_plan.pop("quota", None)
 
